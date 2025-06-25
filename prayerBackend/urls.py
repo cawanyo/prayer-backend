@@ -22,5 +22,6 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls')),
     path('api/prayers/',include('prayer.urls') ),
     path('api/availability/', include('availability.urls')),
-    path('api/planing/', include('planing.urls'))
+    path('api/planing/', include('planing.urls')),
+    path('api/rdv/', include('rdv.urls'))
 ]

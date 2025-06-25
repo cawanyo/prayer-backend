@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'prayer',
     'accounts',
     'availability',
-    'planing'
+    'planing',
+    'rdv'
 ]
 
 MIDDLEWARE = [
