@@ -11,7 +11,7 @@ class RDVAvailabilitySerializer(serializers.ModelSerializer):
 class RDVSerializer(serializers.ModelSerializer):
     rdv_availabilities = RDVAvailabilitySerializer(many=True)
     selected_availability = RDVAvailabilitySerializer(read_only=True)
-    created_by = CustomUserSerializer()
+    created_by = CustomUserSerializer(read_only=True)
 
     class Meta:
         model = RDV
