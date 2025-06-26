@@ -136,7 +136,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://140.93.98.218:3000"
 ]
-
+ALLOWED_HOSTS = ["*"]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
