@@ -51,6 +51,16 @@ class AvailabilityView(APIView):
         return Response(serializer.data)
     
 
+class AvailabilityByMonthView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, year, month):
+
+        programs = Availability.objects.filter(user=request.user, date__month=month, date__year=year).order_by('date')
+        serializer = AvailabilitySerializer(programs, many=True)
+        return Response(serializer.data)
+
+
 class AvailableUsersByDate(APIView):
     permission_classes = [permissions.IsAuthenticated, ResponsablePermission ]  # ou AllowAny si public
 

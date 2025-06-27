@@ -34,6 +34,16 @@ class ProgramByDateView(APIView):
         return Response(serializer.data)
     
 
+class ProgramsByMonthView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, year, month):
+
+        programs = Program.objects.filter(date__month=month, date__year=year).order_by('date', 'start_time')
+        serializer = ProgramSerializer(programs, many=True)
+        return Response(serializer.data)
+
+
 class ProgramUpsertView(APIView):
     permission_classes = [permissions.IsAuthenticated, ResponsablePermission]
 
