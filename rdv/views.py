@@ -4,7 +4,13 @@ from rest_framework.response import Response
 from .models import RDV, RDVAvailability
 from accounts.permissions import ResponsablePermission
 from .serializers import RDVSerializer, RDVAvailabilitySerializer
+from rest_framework.pagination import PageNumberPagination
 
+
+class CustomRDVPagination(PageNumberPagination):
+    page_size = 31
+    
+    
 class RDVCreateView(generics.CreateAPIView):
     serializer_class = RDVSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -16,6 +22,7 @@ class RDVCreateView(generics.CreateAPIView):
 class RDVListView(generics.ListAPIView):
     serializer_class = RDVSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = CustomRDVPagination
 
     def get_queryset(self):
         return RDV.objects.filter(created_by=self.request.user)

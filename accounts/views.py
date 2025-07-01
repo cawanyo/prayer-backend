@@ -2,7 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from django.contrib.auth.models import Group
@@ -107,6 +108,8 @@ class MemberDemandListView(generics.ListAPIView):
     queryset = MemberDemand.objects.all()
     serializer_class = MemberDemandSerializer
     permission_classes = [IsAuthenticated, ResponsablePermission]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['state']
 
 
 class MemberDemandUpdateView(generics.RetrieveUpdateAPIView):

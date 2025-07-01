@@ -4,7 +4,11 @@ from django.shortcuts import render
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.pagination import PageNumberPagination
+
+
 
 from .models import Prayer, PrayerCategory, Comment
 from .serializers import PrayerSerializer, PrayerCategorySerializer, CommentSerializer
@@ -39,7 +43,10 @@ class PrayerCreateView(generics.CreateAPIView):
 class PrayerListView(generics.ListAPIView):
     queryset = Prayer.objects.all()
     serializer_class = PrayerSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     permission_classes = [permissions.IsAuthenticated, ResponsablePermission ]
+    filterset_fields = ['state']
+    ordering_fields = ['submission_date']
 
 
 class PrayerDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -52,9 +59,24 @@ class PrayerDetailView(generics.RetrieveUpdateDestroyAPIView):
 @permission_classes([permissions.IsAuthenticated])
 def user_prayers(request):
     prayers = Prayer.objects.filter(user=request.user)
-    serializer = PrayerSerializer(prayers, many=True)
-    print(request)
-    return Response(serializer.data)
+    
+    print(prayers)
+    # Handle status filtering
+    state = request.GET.get('state')
+    if state:
+        prayers = prayers.filter(state=state)
+
+    # Handle ordering
+    ordering = request.GET.get('ordering')
+    if ordering in ['submission_date', '-submission_date']:
+        prayers = prayers.order_by(ordering)
+    
+    paginator = PageNumberPagination()
+    paginator.page_size = 10  
+    paginated_prayers = paginator.paginate_queryset(prayers, request)
+    
+    serializer = PrayerSerializer(paginated_prayers, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 class PrayerCommentListCreateView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
